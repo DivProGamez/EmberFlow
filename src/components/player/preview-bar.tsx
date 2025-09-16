@@ -4,7 +4,7 @@ import type { Video } from "@/lib/data";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 
 interface PreviewBarProps {
   videos: Video[];
@@ -13,10 +13,14 @@ interface PreviewBarProps {
 }
 
 export default function PreviewBar({ videos, currentVideo, onSelectVideo }: PreviewBarProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [focusedIndex, setFocusedIndex] = useState(videos.findIndex(v => v.id === currentVideo.id));
   const activeThumbnailRef = useRef<HTMLButtonElement>(null);
   const thumbnailRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
+  useEffect(() => {
+    setFocusedIndex(videos.findIndex(v => v.id === currentVideo.id));
+  }, [currentVideo, videos]);
+  
   useEffect(() => {
     thumbnailRefs.current.clear();
   });
@@ -37,41 +41,51 @@ export default function PreviewBar({ videos, currentVideo, onSelectVideo }: Prev
   }, [videos]);
 
   useEffect(() => {
-    if (activeThumbnailRef.current) {
-      activeThumbnailRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
+    const element = thumbnailRefs.current.get(videos[focusedIndex]?.id);
+    if (element) {
+        element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center',
+        });
+        element.focus();
     }
-  }, [currentVideo]);
+  }, [focusedIndex, videos]);
+
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    const currentIndex = videos.findIndex(v => v.id === currentVideo.id);
-
-    let nextIndex = -1;
-    if (event.key === "ArrowRight") {
-      nextIndex = Math.min(currentIndex + 1, videos.length - 1);
-    } else if (event.key === "ArrowLeft") {
-      nextIndex = Math.max(currentIndex - 1, 0);
+    let newIndex = focusedIndex;
+    
+    switch (event.key) {
+      case "ArrowRight":
+        newIndex = Math.min(focusedIndex + 1, videos.length - 1);
+        break;
+      case "ArrowLeft":
+        newIndex = Math.max(focusedIndex - 1, 0);
+        break;
+      case "Enter":
+      case " ": // Space bar
+        event.preventDefault();
+        onSelectVideo(videos[focusedIndex]);
+        return;
+      default:
+        return;
     }
 
-    if (nextIndex !== -1 && nextIndex !== currentIndex) {
-      event.preventDefault();
-      onSelectVideo(videos[nextIndex]);
-      scrollToIndex(nextIndex);
+    event.preventDefault();
+    if (newIndex !== focusedIndex) {
+      setFocusedIndex(newIndex);
     }
-  }, [videos, currentVideo, onSelectVideo, scrollToIndex]);
+  }, [focusedIndex, videos, onSelectVideo]);
   
   return (
     <div 
       className="p-4 bg-gradient-to-t from-black/80 to-transparent"
       onKeyDown={handleKeyDown}
-      ref={containerRef}
     >
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex w-max space-x-4 p-4">
-          {videos.map((video) => {
+          {videos.map((video, index) => {
             const isActive = video.id === currentVideo.id;
             return (
               <button
@@ -81,9 +95,11 @@ export default function PreviewBar({ videos, currentVideo, onSelectVideo }: Prev
                   if (isActive) (activeThumbnailRef as React.MutableRefObject<HTMLButtonElement | null>).current = el;
                 }}
                 onClick={() => onSelectVideo(video)}
+                onFocus={() => setFocusedIndex(index)}
                 className={cn(
                   "group relative w-48 h-28 flex-shrink-0 rounded-lg overflow-hidden transition-all duration-300 transform focus:outline-none focus-visible:ring-4 focus-visible:ring-primary",
-                  isActive ? "ring-4 ring-primary shadow-lg scale-105" : "hover:scale-105"
+                  isActive ? "ring-4 ring-primary shadow-lg scale-105" : "hover:scale-105",
+                   focusedIndex === index && !isActive && "ring-4 ring-gray-500"
                 )}
                 aria-label={`Select ${video.title}`}
               >
