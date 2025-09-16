@@ -14,44 +14,16 @@ interface PreviewBarProps {
 
 export default function PreviewBar({ videos, currentVideo, onSelectVideo }: PreviewBarProps) {
   const [focusedIndex, setFocusedIndex] = useState(videos.findIndex(v => v.id === currentVideo.id));
-  const activeThumbnailRef = useRef<HTMLButtonElement>(null);
   const thumbnailRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Update focused index when the current video changes from outside
   useEffect(() => {
-    setFocusedIndex(videos.findIndex(v => v.id === currentVideo.id));
+    const newIndex = videos.findIndex(v => v.id === currentVideo.id);
+    if (newIndex !== -1) {
+      setFocusedIndex(newIndex);
+    }
   }, [currentVideo, videos]);
-  
-  useEffect(() => {
-    thumbnailRefs.current.clear();
-  });
-
-  const scrollToIndex = useCallback((index: number) => {
-    if (index >= 0 && index < videos.length) {
-      const video = videos[index];
-      const element = thumbnailRefs.current.get(video.id);
-      if (element) {
-        element.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
-        element.focus();
-      }
-    }
-  }, [videos]);
-
-  useEffect(() => {
-    const element = thumbnailRefs.current.get(videos[focusedIndex]?.id);
-    if (element) {
-        element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center',
-        });
-        element.focus();
-    }
-  }, [focusedIndex, videos]);
-
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
     let newIndex = focusedIndex;
@@ -66,9 +38,18 @@ export default function PreviewBar({ videos, currentVideo, onSelectVideo }: Prev
       case "Enter":
       case " ": // Space bar
         event.preventDefault();
-        onSelectVideo(videos[focusedIndex]);
+        // Check if the focused video is already the current one before calling onSelectVideo
+        if (videos[focusedIndex].id !== currentVideo.id) {
+          onSelectVideo(videos[focusedIndex]);
+        }
         return;
+      // Allow parent to handle other keys like ArrowUp/ArrowDown to hide/show controls
+      case "ArrowUp":
+      case "ArrowDown":
+          return;
       default:
+        // Prevent default for any other key press to stop browser-native scrolling
+        event.preventDefault();
         return;
     }
 
@@ -76,30 +57,48 @@ export default function PreviewBar({ videos, currentVideo, onSelectVideo }: Prev
     if (newIndex !== focusedIndex) {
       setFocusedIndex(newIndex);
     }
-  }, [focusedIndex, videos, onSelectVideo]);
-  
+  }, [focusedIndex, videos, onSelectVideo, currentVideo]);
+
+  // Effect to focus and scroll to the active thumbnail
+  useEffect(() => {
+    const videoId = videos[focusedIndex]?.id;
+    const element = thumbnailRefs.current.get(videoId);
+    if (element) {
+      element.focus({ preventScroll: true }); // Prevent native focus scroll
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  }, [focusedIndex, videos]);
+
   return (
     <div 
-      className="p-4 bg-gradient-to-t from-black/80 to-transparent"
+      ref={containerRef}
       onKeyDown={handleKeyDown}
+      tabIndex={-1}
+      className="p-4 bg-gradient-to-t from-black/80 to-transparent focus:outline-none"
     >
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex w-max space-x-4 p-4">
           {videos.map((video, index) => {
             const isActive = video.id === currentVideo.id;
+            const isFocused = index === focusedIndex;
             return (
               <button
                 key={video.id}
                 ref={(el) => {
                   if (el) thumbnailRefs.current.set(video.id, el);
-                  if (isActive) (activeThumbnailRef as React.MutableRefObject<HTMLButtonElement | null>).current = el;
+                  else thumbnailRefs.current.delete(video.id);
                 }}
                 onClick={() => onSelectVideo(video)}
                 onFocus={() => setFocusedIndex(index)}
                 className={cn(
-                  "group relative w-48 h-28 flex-shrink-0 rounded-lg overflow-hidden transition-all duration-300 transform focus:outline-none focus-visible:ring-4 focus-visible:ring-primary",
+                  "group relative w-48 h-28 flex-shrink-0 rounded-lg overflow-hidden transition-all duration-300 transform focus:outline-none",
                   isActive ? "ring-4 ring-primary shadow-lg scale-105" : "hover:scale-105",
-                   focusedIndex === index && !isActive && "ring-4 ring-gray-500"
+                  isFocused && !isActive && "ring-4 ring-gray-500", // Focused but not active
+                  isFocused && "scale-105" // General focused state
                 )}
                 aria-label={`Select ${video.title}`}
               >
@@ -107,6 +106,7 @@ export default function PreviewBar({ videos, currentVideo, onSelectVideo }: Prev
                   src={video.thumbnailUrl}
                   alt={video.title}
                   fill
+                  sizes="192px"
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                   data-ai-hint={video.thumbnailHint}
                 />

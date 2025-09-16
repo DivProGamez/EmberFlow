@@ -13,8 +13,9 @@ export default function CharacterGrid({ characters }: { characters: Character[] 
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const iconRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  const handleIconClick = (character: Character) => {
+  const handleIconClick = useCallback((character: Character) => {
     const isUnlocked = unlockedCharacters.has(character.id);
     if (isUnlocked) {
       router.push(`/player/${character.id}`);
@@ -22,10 +23,13 @@ export default function CharacterGrid({ characters }: { characters: Character[] 
       setSelectedCharacter(character);
       setDialogOpen(true);
     }
-  };
+  }, [unlockedCharacters, router]);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (dialogOpen) return;
+    
     const getNumColumns = () => {
+        if (typeof window === 'undefined') return 6;
         if (window.innerWidth >= 1024) return 6;
         if (window.innerWidth >= 768) return 4;
         if (window.innerWidth >= 640) return 3;
@@ -57,21 +61,37 @@ export default function CharacterGrid({ characters }: { characters: Character[] 
     }
     
     event.preventDefault();
-    setFocusedIndex(newIndex);
+    if (newIndex !== focusedIndex) {
+      setFocusedIndex(newIndex);
+    }
 
-  }, [focusedIndex, characters, handleIconClick]);
+  }, [focusedIndex, characters, handleIconClick, dialogOpen]);
   
   useEffect(() => {
     const characterId = characters[focusedIndex]?.id;
     const element = iconRefs.current.get(characterId);
-    element?.focus();
+    if (element) {
+        element.focus();
+        element.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center",
+        });
+    }
   }, [focusedIndex, characters]);
+
+  useEffect(() => {
+    // Focus the container on mount to start listening to key events
+    gridRef.current?.focus();
+  }, []);
 
 
   return (
     <>
       <div 
-        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 max-w-7xl mx-auto"
+        ref={gridRef}
+        tabIndex={-1}
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 max-w-7xl mx-auto focus:outline-none"
         onKeyDown={handleKeyDown}
         role="grid"
       >
@@ -97,7 +117,12 @@ export default function CharacterGrid({ characters }: { characters: Character[] 
         <IAPDialog
           character={selectedCharacter}
           open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          onOpenChange={(isOpen) => {
+            setDialogOpen(isOpen);
+            if (!isOpen) {
+              gridRef.current?.focus();
+            }
+          }}
         />
       )}
     </>
