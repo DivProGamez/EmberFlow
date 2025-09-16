@@ -1,3 +1,42 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    { "id": "character_fireplace_icon", "imageUrl": "https://picsum.photos/seed/fireplace_icon/200/200", "imageHint": "fireplace icon", "description": "Icon for Cozy Fireplace" },
+    { "id": "character_aquarium_icon", "imageUrl": "https://picsum.photos/seed/aquarium_icon/200/200", "imageHint": "aquarium icon", "description": "Icon for Vibrant Aquarium" },
+    { "id": "character_forest_icon", "imageUrl": "https://picsum.photos/seed/forest_icon/200/200", "imageHint": "forest icon", "description": "Icon for Autumn Forest" },
+    { "id": "character_rain_icon", "imageUrl": "https://picsum.photos/seed/rain_icon/200/200", "imageHint": "rain icon", "description": "Icon for Rain on Window" },
+    { "id": "character_beach_icon", "imageUrl": "https://picsum.photos/seed/beach_icon/200/200", "imageHint": "beach icon", "description": "Icon for Sandy Beach" },
+    { "id": "character_stream_icon", "imageUrl": "https://picsum.photos/seed/stream_icon/200/200", "imageHint": "stream icon", "description": "Icon for Mountain Stream" },
+    { "id": "character_zen_icon", "imageUrl": "https://picsum.photos/seed/zen_icon/200/200", "imageHint": "zen garden", "description": "Icon for Zen Garden" },
+    { "id": "character_snow_icon", "imageUrl": "https://picsum.photos/seed/snow_icon/200/200", "imageHint": "snowy cabin", "description": "Icon for Snowy Cabin" },
+    { "id": "character_city_icon", "imageUrl": "https://picsum.photos/seed/city_icon/200/200", "imageHint": "city rooftop", "description": "Icon for City Rooftop" },
+    { "id": "character_space_icon", "imageUrl": "https://picsum.photos/seed/space_icon/200/200", "imageHint": "space nebula", "description": "Icon for Space Nebula" },
+    { "id": "character_waterfall_icon", "imageUrl": "https://picsum.photos/seed/waterfall_icon/200/200", "imageHint": "tropical waterfall", "description": "Icon for Tropical Waterfall" },
+    { "id": "character_library_icon", "imageUrl": "https://picsum.photos/seed/library_icon/200/200", "imageHint": "library", "description": "Icon for Library Ambiance" },
+
+    { "id": "character_fireplace_video_1_thumb", "imageUrl": "https://picsum.photos/seed/fp_v1_thumb/320/180", "imageHint": "fireplace", "description": "Thumb 1" },
+    { "id": "character_fireplace_video_1_main", "imageUrl": "https://picsum.photos/seed/fp_v1_main/1920/1080", "imageHint": "fireplace", "description": "Main 1" },
+    { "id": "character_fireplace_video_2_thumb", "imageUrl": "https://picsum.photos/seed/fp_v2_thumb/320/180", "imageHint": "fireplace stone", "description": "Thumb 2" },
+    { "id": "character_fireplace_video_2_main", "imageUrl": "https://picsum.photos/seed/fp_v2_main/1920/1080", "imageHint": "fireplace stone", "description": "Main 2" },
+    { "id": "character_fireplace_video_3_thumb", "imageUrl": "https://picsum.photos/seed/fp_v3_thumb/320/180", "imageHint": "campfire", "description": "Thumb 3" },
+    { "id": "character_fireplace_video_3_main", "imageUrl": "https://picsum.photos/seed/fp_v3_main/1920/1080", "imageHint": "campfire", "description": "Main 3" },
+    { "id": "character_fireplace_video_4_thumb", "imageUrl": "https://picsum.photos/seed/fp_v4_thumb/320/180", "imageHint": "wood stove", "description": "Thumb 4" },
+    { "id": "character_fireplace_video_4_main", "imageUrl": "https://picsum.photos/seed/fp_v4_main/1920/1080", "imageHint": "wood stove", "description": "Main 4" },
+    { "id": "character_fireplace_video_5_thumb", "imageUrl": "https://picsum.photos/seed/fp_v5_thumb/320/180", "imageHint": "bonfire", "description": "Thumb 5" },
+    { "id": "character_fireplace_video_5_main", "imageUrl": "https://picsum.photos/seed/fp_v5_main/1920/1080", "imageHint": "bonfire", "description": "Main 5" },
+    { "id": "character_fireplace_video_6_thumb", "imageUrl": "https://picsum.photos/seed/fp_v6_thumb/320/180", "imageHint": "candles", "description": "Thumb 6" },
+    { "id": "character_fireplace_video_6_main", "imageUrl": "https://picsum.photos/seed/fp_v6_main/1920/1080", "imageHint": "candles", "description": "Main 6" },
+    
+    { "id": "character_aquarium_video_1_thumb", "imageUrl": "https://picsum.photos/seed/aq_v1_thumb/320/180", "imageHint": "coral reef", "description": "Thumb 1" },
+    { "id": "character_aquarium_video_1_main", "imageUrl": "https://picsum.photos/seed/aq_v1_main/1920/1080", "imageHint": "coral reef", "description": "Main 1" },
+    { "id": "character_aquarium_video_2_thumb", "imageUrl": "https://picsum.photos/seed/aq_v2_thumb/320/180", "imageHint": "tropical fish", "description": "Thumb 2" },
+    { "id": "character_aquarium_video_2_main", "imageUrl": "https://picsum.photos/seed/aq_v2_main/1920/1080", "imageHint": "tropical fish", "description": "Main 2" },
+    { "id": "character_aquarium_video_3_thumb", "imageUrl": "https://picsum.photos/seed/aq_v3_thumb/320/180", "imageHint": "jellyfish", "description": "Thumb 3" },
+    { "id": "character_aquarium_video_3_main", "imageUrl": "https://picsum.photos/seed/aq_v3_main/1920/1080", "imageHint": "jellyfish", "description": "Main 3" },
+    { "id": "character_aquarium_video_4_thumb", "imageUrl": "https://picsum.photos/seed/aq_v4_thumb/320/180", "imageHint": "deep sea", "description": "Thumb 4" },
+    { "id": "character_aquarium_video_4_main", "imageUrl": "https://picsum.photos/seed/aq_v4_main/1920/1080", "imageHint": "deep sea", "description": "Main 4" },
+    { "id": "character_aquarium_video_5_thumb", "imageUrl": "https://picsum.photos/seed/aq_v5_thumb/320/180", "imageHint": "freshwater", "description": "Thumb 5" },
+    { "id": "character_aquarium_video_5_main", "imageUrl": "https://picsum.photos/seed/aq_v5_main/1920/1080", "imageHint": "freshwater", "description": "Main 5" },
+    { "id": "character_aquarium_video_6_thumb", "imageUrl": "https://picsum.photos/seed/aq_v6_thumb/320/180", "imageHint": "anemone", "description": "Thumb 6" },
+    { "id": "character_aquarium_video_6_main", "imageUrl": "https://picsum.photos/seed/aq_v6_main/1920/1080", "imageHint": "anemone", "description": "Main 6" }
+  ]
 }

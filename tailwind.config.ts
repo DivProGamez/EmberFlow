@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['"PT Sans"', 'sans-serif'],
+        headline: ['"Playfair Display"', 'serif'],
         code: ['monospace'],
       },
       colors: {
@@ -88,10 +88,20 @@ export default {
             height: '0',
           },
         },
+        'glow': {
+          '0%, 100%': { 'box-shadow': '0 0 10px -5px hsl(var(--primary))' },
+          '50%': { 'box-shadow': '0 0 20px 0px hsl(var(--primary))' },
+        },
+        'progress': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0)' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'glow': 'glow 3s ease-in-out infinite',
+        'progress': 'progress 3s ease-out forwards',
       },
     },
   },
