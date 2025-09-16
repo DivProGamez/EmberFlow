@@ -2,6 +2,7 @@
 
 import type { Character, Video } from "@/lib/data";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import PlayerHeader from "./player-header";
 import VideoDisplay from "./video-display";
 import PreviewBar from "./preview-bar";
@@ -12,6 +13,7 @@ export default function PlayerClient({ character }: { character: Character }) {
   const [controlsVisible, setControlsVisible] = useState(true);
   const hideControlsTimeout = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const showAndAutoHideControls = useCallback(() => {
     if (hideControlsTimeout.current) {
@@ -42,6 +44,14 @@ export default function PlayerClient({ character }: { character: Character }) {
     showAndAutoHideControls();
   }, [showAndAutoHideControls]);
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      router.push('/menu');
+    } else {
+        handleInteraction(event);
+    }
+  };
+
 
   return (
     <div 
@@ -49,7 +59,7 @@ export default function PlayerClient({ character }: { character: Character }) {
       className="relative h-screen w-full bg-black overflow-hidden focus:outline-none"
       onMouseMove={handleInteraction}
       onFocus={handleInteraction}
-      onKeyDown={handleInteraction}
+      onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
       <VideoDisplay video={currentVideo} />
