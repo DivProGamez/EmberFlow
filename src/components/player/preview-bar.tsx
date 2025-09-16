@@ -4,7 +4,7 @@ import type { Video } from "@/lib/data";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 interface PreviewBarProps {
   videos: Video[];
@@ -13,7 +13,28 @@ interface PreviewBarProps {
 }
 
 export default function PreviewBar({ videos, currentVideo, onSelectVideo }: PreviewBarProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const activeThumbnailRef = useRef<HTMLButtonElement>(null);
+  const thumbnailRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  useEffect(() => {
+    thumbnailRefs.current.clear();
+  });
+
+  const scrollToIndex = useCallback((index: number) => {
+    if (index >= 0 && index < videos.length) {
+      const video = videos[index];
+      const element = thumbnailRefs.current.get(video.id);
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+        element.focus();
+      }
+    }
+  }, [videos]);
 
   useEffect(() => {
     if (activeThumbnailRef.current) {
@@ -25,8 +46,29 @@ export default function PreviewBar({ videos, currentVideo, onSelectVideo }: Prev
     }
   }, [currentVideo]);
 
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    const currentIndex = videos.findIndex(v => v.id === currentVideo.id);
+
+    let nextIndex = -1;
+    if (event.key === "ArrowRight") {
+      nextIndex = Math.min(currentIndex + 1, videos.length - 1);
+    } else if (event.key === "ArrowLeft") {
+      nextIndex = Math.max(currentIndex - 1, 0);
+    }
+
+    if (nextIndex !== -1 && nextIndex !== currentIndex) {
+      event.preventDefault();
+      onSelectVideo(videos[nextIndex]);
+      scrollToIndex(nextIndex);
+    }
+  }, [videos, currentVideo, onSelectVideo, scrollToIndex]);
+  
   return (
-    <div className="p-4 bg-gradient-to-t from-black/80 to-transparent">
+    <div 
+      className="p-4 bg-gradient-to-t from-black/80 to-transparent"
+      onKeyDown={handleKeyDown}
+      ref={containerRef}
+    >
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex w-max space-x-4 p-4">
           {videos.map((video) => {
@@ -34,7 +76,10 @@ export default function PreviewBar({ videos, currentVideo, onSelectVideo }: Prev
             return (
               <button
                 key={video.id}
-                ref={isActive ? activeThumbnailRef : null}
+                ref={(el) => {
+                  if (el) thumbnailRefs.current.set(video.id, el);
+                  if (isActive) (activeThumbnailRef as React.MutableRefObject<HTMLButtonElement | null>).current = el;
+                }}
                 onClick={() => onSelectVideo(video)}
                 className={cn(
                   "group relative w-48 h-28 flex-shrink-0 rounded-lg overflow-hidden transition-all duration-300 transform focus:outline-none focus-visible:ring-4 focus-visible:ring-primary",
